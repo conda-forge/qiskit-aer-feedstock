@@ -1,11 +1,11 @@
-About qiskit-aer
-================
+About qiskit-aer-feedstock
+==========================
+
+Feedstock license: [BSD-3-Clause](https://github.com/conda-forge/qiskit-aer-feedstock/blob/main/LICENSE.txt)
 
 Home: https://github.com/Qiskit/qiskit-aer
 
 Package license: Apache-2.0
-
-Feedstock license: [BSD-3-Clause](https://github.com/conda-forge/qiskit-aer-feedstock/blob/main/LICENSE.txt)
 
 Summary: Qiskit Aer - High performance simulators for Qiskit
 
@@ -185,7 +185,4 @@ Feedstock Maintainers
 
 * [@leofang](https://github.com/leofang/)
 * [@wshanks](https://github.com/wshanks/)
-
-
-<!-- dummy commit to enable rerendering -->
 
