@@ -20,7 +20,7 @@ build:
   # Skip Windows build until qiskit-terra has a Windows build
   # Skip macOS build until https://github.com/Qiskit/qiskit-aer/issues/1689 is addressed
   skip: True  # [win or osx]
-  number: 1
+  number: 2
   script_env:
     - DISABLE_DEPENDENCY_INSTALL=ON
     - DISABLE_CONAN=ON
@@ -47,6 +47,7 @@ requirements:
     - spdlog =1.5.0
   run:
     - {{ pin_compatible('numpy') }}
+    - {{ pin_compatible('muparserx', max_pin='x.x.x') }}
     - python
     - qiskit-terra >=0.21.0
     - scipy >=1.0
