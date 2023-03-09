@@ -1,5 +1,5 @@
 {% set name = "qiskit-aer" %}
-{% set version = "0.11.2" %}
+{% set version = "0.12.0" %}
 
 package:
   name: {{ name|lower }}
@@ -7,7 +7,7 @@ package:
 
 source:
   url: https://github.com/Qiskit/{{ name }}/archive/refs/tags/{{ version }}.tar.gz
-  sha256: d18aefd09971bfe2018dc78623ddf8a25bc0660f4fb0987a82c8e2a677bffc4e
+  sha256: 1be397975ae9a9358217f9613501a5fcc1f187f5a820386d3c26b84f671ac7b3
   patches:
     # This patch is used to prevent scikit-build from trying to pip install cmake.
     # It can be dropped when a version including
@@ -19,8 +19,8 @@ build:
   script: {{ PYTHON }} -m pip install . -vv
   # Skip Windows build until qiskit-terra has a Windows build
   # Skip macOS build until https://github.com/Qiskit/qiskit-aer/issues/1689 is addressed
-  skip: True  # [win or osx]
-  number: 2
+  skip: true  # [win or osx]
+  number: 0
   script_env:
     - DISABLE_DEPENDENCY_INSTALL=ON
     - DISABLE_CONAN=ON
