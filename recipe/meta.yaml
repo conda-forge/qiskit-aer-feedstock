@@ -32,7 +32,7 @@ requirements:
     - liblapack
     - muparserx =4.0.8
     - nlohmann_json =3.1.2
-    - numpy 1.16.3
+    - numpy
     - pip
     - python
     - pybind11
