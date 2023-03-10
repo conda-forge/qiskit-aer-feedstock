@@ -60,6 +60,7 @@ test:
     - ipython
     - matplotlib-base
     - pip
+    - seaborn
     - stestr
 
 about:
