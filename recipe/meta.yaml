@@ -57,6 +57,7 @@ test:
     - stestr run
   requires:
     - ddt
+    - ipython
     - pip
     - stestr
 
