@@ -58,6 +58,7 @@ test:
   requires:
     - ddt
     - ipython
+    - matplotlib-base
     - pip
     - stestr
 
