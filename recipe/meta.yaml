@@ -59,6 +59,8 @@ test:
     - ipython
     - matplotlib-base
     - pip
+    # Pin qiskit-terra for now because its deprecation warnings fail the tests for aer less than 0.12.1
+    - qiskit-terra <0.24
     - seaborn
     - stestr
 
