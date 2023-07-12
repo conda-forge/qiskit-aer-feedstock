@@ -53,7 +53,7 @@ test:
     - qiskit_aer
   commands:
     - pip check
-    - stestr run
+    - stestr run -E test_save_statevector_for_qasm3_circuit  # Ignore tests that require qiskit_qasm3_import which is not packaged in conda-forge
   requires:
     - ddt
     - ipython
