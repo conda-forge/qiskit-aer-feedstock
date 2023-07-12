@@ -58,6 +58,7 @@ test:
     - ddt
     - ipython
     - matplotlib-base
+    - numpy <1.25.0  # Temporary pin to avoid deprecation warnings, following https://github.com/Qiskit/qiskit-aer/pull/1871
     - pip
     - seaborn
     - stestr
