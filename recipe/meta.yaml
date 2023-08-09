@@ -14,7 +14,7 @@ build:
   # Skip Windows build until qiskit-terra has a Windows build
   # Skip macOS build until https://github.com/Qiskit/qiskit-aer/issues/1689 is addressed
   skip: true  # [win or osx]
-  number: 0
+  number: 1
   script_env:
     - DISABLE_DEPENDENCY_INSTALL=ON
     - DISABLE_CONAN=ON
