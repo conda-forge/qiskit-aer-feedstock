@@ -1,0 +1,34 @@
+From e11c99996d2f43c2166586f69273c930ec377342 Mon Sep 17 00:00:00 2001
+From: Will Shanks <willshanks@us.ibm.com>
+Date: Fri, 15 Sep 2023 11:20:22 -0400
+Subject: [PATCH] windows find blas
+
+---
+ CMakeLists.txt | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 5a3bc55c..c3785f2d 100755
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -43,6 +43,8 @@ endif()
+ option(STATIC_LINKING "Specify if we want statically link the executable (for
+ 						redistribution mainly)" FALSE)
+ option(BUILD_TESTS "Specify whether we want to build tests or not" FALSE)
++option(USE_BUNDLED_BLAS_WIN "Use the bundled openblas library on Windows when
++							not using AER_BLAS_LIB_PATH" TRUE)
+ 
+ # Allow disabling conan for downstream package managers. Requires all libraries to be present in path
+ # Default is value of environment variable if defined or ON
+@@ -202,7 +204,7 @@ else()
+ 		  set(BLA_VENDOR "OpenBLAS")
+ 		endif()
+ 	endif()
+-	if(WIN32)
++	if(WIN32 AND USE_BUNDLED_BLAS_WIN)
+ 		message(STATUS "Uncompressing OpenBLAS static library...")
+ 		set(WIN_ARCH "win64" )
+ 		if("${CMAKE_SIZEOF_VOID_P}" STREQUAL "4") # Checking if win32 build
+-- 
+2.42.0
+

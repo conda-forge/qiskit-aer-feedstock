@@ -1,0 +1,2 @@
+SET "CMAKE_ARGS=%CMAKE_ARGS% -DUSE_BUNDLED_BLAS_WIN:BOOL=FALSE"
+python -m pip install . -vv
