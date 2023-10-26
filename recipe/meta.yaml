@@ -42,7 +42,7 @@ requirements:
     - {{ pin_compatible('numpy') }}
     - {{ pin_compatible('muparserx', max_pin='x.x.x') }}
     - python
-    - qiskit-terra >=0.21.0
+    - qiskit >=0.44.0
     - scipy >=1.0
 
 test:
