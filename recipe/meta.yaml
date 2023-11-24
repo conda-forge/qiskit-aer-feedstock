@@ -1,5 +1,5 @@
 {% set name = "qiskit-aer" %}
-{% set version = "0.13.0" %}
+{% set version = "0.13.1" %}
 
 package:
   name: {{ name|lower }}
@@ -7,7 +7,7 @@ package:
 
 source:
   url: https://github.com/Qiskit/{{ name }}/archive/refs/tags/{{ version }}.tar.gz
-  sha256: dc9896bc1b86129a98580a91be8bde4489d04f2cdc7e75965dc51e50d84d31de
+  sha256: d87064b5e60a5bf2a88019d2b71e217f33d2009793fa7edea0bf08cf30e326e5
 
 build:
   script: CMAKE_GENERATOR="Ninja" {{ PYTHON }} -m pip install . -vv
