@@ -15,7 +15,7 @@ source:
     - 0001-windows-find-blas.patch
 
 build:
-  script: {{ PYTHON }} -m pip install . -vv  # [not win]
+  script: CMAKE_GENERATOR="Ninja" {{ PYTHON }} -m pip install . -vv  # [not win]
   # Skip macOS build until https://github.com/Qiskit/qiskit-aer/issues/1689 is addressed
   skip: true  # [osx]
   number: 1
