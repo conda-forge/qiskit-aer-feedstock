@@ -4,6 +4,10 @@ channel_sources:
 - conda-forge
 channel_targets:
 - conda-forge main
+cuda_compiler:
+- None
+cuda_compiler_version:
+- None
 cxx_compiler:
 - gxx
 cxx_compiler_version:
@@ -27,5 +31,10 @@ spdlog:
 target_platform:
 - linux-64
 zip_keys:
+- - cxx_compiler_version
+  - cuda_compiler
+  - cuda_compiler_version
+  - cdt_name
+  - docker_image
 - - python
   - numpy
