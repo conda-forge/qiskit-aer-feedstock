@@ -13,6 +13,9 @@ source:
     # USE_BUNDLED_BLAS_WIN cmake option to search for an installed blas library
     # instead
     - 0001-windows-find-blas.patch
+  script_env:
+    - CUQUANTUM_ROOT=$PREFIX # [cuda_compiler_version != "None"]
+    - CUTENSOR_ROOT=$PREFIX # [cuda_compiler_version != "None"]
 
 build:
   script: CMAKE_GENERATOR="Ninja" {{ PYTHON }} -m pip install . -vv  # [not win]
@@ -24,10 +27,16 @@ build:
     - DISABLE_CONAN=ON
     - CMAKE_GENERATOR=Ninja
     - CMAKE_PREFIX_PATH=%PREFIX%  # [win]
+    - CUQUANTUM_ROOT=$PREFIX  # [cuda_compiler_version != "None"]
+    - CUTENSOR_ROOT=$PREFIX  # [cuda_compiler_version != "None"]
+    - AER_THRUST_BACKEND=CUDA  # [cuda_compiler_version != "None"]
+    - AER_ENABLE_CUQUANTUM=ON  # [cuda_compiler_version != "None"]
+    - CUQUANTUM_STATIC=ON  # [cuda_compiler_version != "None"]
 
 requirements:
   build:
     - {{ compiler('cxx') }}
+    - {{ compiler('cuda') }}  # [cuda_compiler_version != "None"]
     - cmake !=3.17,>=3.8
     - libgomp      # [linux]
     - llvm-openmp  # [osx]
@@ -44,12 +53,14 @@ requirements:
     - scikit-build >=0.11.0
     - setuptools >=40.1.0
     - spdlog
+    - cuquantum-python  # [cuda_compiler_version != "None"]
   run:
     - {{ pin_compatible('numpy') }}
     - {{ pin_compatible('muparserx', max_pin='x.x.x') }}
     - python
     - qiskit >=0.44.0
     - scipy >=1.0
+    - cuquantum-python  # [cuda_compiler_version != "None"]
 
 test:
   source_files:
