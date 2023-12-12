@@ -17,7 +17,7 @@ source:
 build:
   script: CMAKE_GENERATOR="Ninja" {{ PYTHON }} -m pip install . -vv  # [not win]
   # Skip macOS build until https://github.com/Qiskit/qiskit-aer/issues/1689 is addressed
-  skip: true  # [osx]
+  skip: true  # [osx or (win64 and cuda_compiler_version != "None")]
   number: 2
   script_env:
     - DISABLE_DEPENDENCY_INSTALL=ON
@@ -28,7 +28,6 @@ build:
     - CUTENSOR_ROOT=$PREFIX  # [linux64 and cuda_compiler_version != "None"]
     - AER_THRUST_BACKEND=CUDA  # [linux64 and cuda_compiler_version != "None"]
     - AER_ENABLE_CUQUANTUM=ON  # [linux64 and cuda_compiler_version != "None"]
-    - CUQUANTUM_STATIC=ON  # [linux64 and cuda_compiler_version != "None"]
 
 requirements:
   build:
@@ -50,14 +49,12 @@ requirements:
     - scikit-build >=0.11.0
     - setuptools >=40.1.0
     - spdlog
-    - cuquantum-python  # [linux64 and cuda_compiler_version != "None"]
   run:
     - {{ pin_compatible('numpy') }}
     - {{ pin_compatible('muparserx', max_pin='x.x.x') }}
     - python
     - qiskit >=0.44.0
     - scipy >=1.0
-    - cuquantum-python  # [linux64 and cuda_compiler_version != "None"]
 
 test:
   source_files:
