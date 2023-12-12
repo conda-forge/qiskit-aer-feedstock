@@ -63,7 +63,9 @@ requirements:
     - setuptools >=40.1.0
     - spdlog
     - cuda-version {{ cuda_compiler_version }}  # [linux64 and cuda_compiler_version != "None"]
-    - cuquantum                                 # [linux64 and cuda_compiler_version != "None"]  # Qiskit Aer now uses both custatevec & cutensornet
+    # Qiskit Aer now uses both
+    - custatevec                                # [linux64 and cuda_compiler_version != "None"]
+    - cutensornet                               # [linux64 and cuda_compiler_version != "None"]
   run:
     - {{ pin_compatible('numpy') }}
     - {{ pin_compatible('muparserx', max_pin='x.x.x') }}
