@@ -29,6 +29,8 @@ build:
   # Skip macOS build until https://github.com/Qiskit/qiskit-aer/issues/1689 is addressed
   skip: true  # [osx or (win64 and cuda_compiler_version != "None")]
   number: 2
+  string: cuda{{ cuda_compiler_version | replace('.', '') }}_py{{ CONDA_PY }}h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}  # [cuda_compiler_version != "None"]
+  string: cpu_py{{ CONDA_PY }}h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}                                                 # [cuda_compiler_version == "None"]
   script_env:
     - DISABLE_DEPENDENCY_INSTALL=ON
     - DISABLE_CONAN=ON
