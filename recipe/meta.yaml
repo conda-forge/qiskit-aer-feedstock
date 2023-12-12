@@ -1,6 +1,12 @@
 {% set name = "qiskit-aer" %}
 {% set version = "0.13.1" %}
 
+{% if cuda_compiler_version in (None, "None", True, False) %}
+{% set cuda_major = 0 %}
+{% else %}
+{% set cuda_major = environ.get("cuda_compiler_version", "11.2").split(".")[0] | int %}
+{% endif %}
+
 package:
   name: {{ name|lower }}
   version: {{ version }}
@@ -28,6 +34,8 @@ build:
     - CUTENSOR_ROOT=$PREFIX  # [linux64 and cuda_compiler_version != "None"]
     - AER_THRUST_BACKEND=CUDA  # [linux64 and cuda_compiler_version != "None"]
     - AER_ENABLE_CUQUANTUM=ON  # [linux64 and cuda_compiler_version != "None"]
+  ignore_run_exports_from:
+    - {{ compiler('cuda') }}
 
 requirements:
   build:
@@ -49,12 +57,16 @@ requirements:
     - scikit-build >=0.11.0
     - setuptools >=40.1.0
     - spdlog
+    - cuda-version {{ cuda_compiler_version }}  # [linux64 and cuda_compiler_version != "None"]
+    - cuquantum                                 # [linux64 and cuda_compiler_version != "None"]  # Qiskit Aer now uses both custatevec & cutensornet
   run:
     - {{ pin_compatible('numpy') }}
     - {{ pin_compatible('muparserx', max_pin='x.x.x') }}
     - python
     - qiskit >=0.44.0
     - scipy >=1.0
+    - cuda-version >={{ cuda_major }}.2,<{{ cuda_major+1 }}  # [(cuda_compiler_version or "").startswith("11")]
+    - cudatoolkit                                            # [(cuda_compiler_version or "").startswith("11")]
 
 test:
   source_files:
