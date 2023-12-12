@@ -24,7 +24,7 @@ build:
   script:
     # cuQuantum only supports Volta+
     # TODO: add cc90 here when we migrate to CUDA 11.8/12.0
-    - export CUDAARCHS="70-real;75-real;80-real;86"  # [linux64 and cuda_compiler_version != "None"]
+    - export AER_CUDA_ARCH="7.0;7.5;8.0;8.6+PTX"  # [linux64 and cuda_compiler_version != "None"]
     - CMAKE_GENERATOR="Ninja" {{ PYTHON }} -m pip install . -vv  # [not win]
   # Skip macOS build until https://github.com/Qiskit/qiskit-aer/issues/1689 is addressed
   skip: true  # [osx or (win64 and cuda_compiler_version != "None")]
