@@ -47,7 +47,7 @@ build:
     - AER_THRUST_BACKEND=CUDA  # [linux64 and cuda_compiler_version != "None"]
     - AER_ENABLE_CUQUANTUM=ON  # [linux64 and cuda_compiler_version != "None"]
   ignore_run_exports_from:
-    - {{ compiler('cuda') }}
+    - {{ compiler('cuda') }}  # [linux64 and cuda_compiler_version != "None"]
 
 requirements:
   build:
