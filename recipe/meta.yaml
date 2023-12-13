@@ -1,5 +1,10 @@
 {% set name = "qiskit-aer" %}
 {% set version = "0.13.1" %}
+{% set build = 1 %}
+
+{% if cuda_compiler_version != "None" %}
+{% set build = build + 200 %}
+{% endif %}
 
 {% if cuda_compiler_version in (None, "None", True, False) %}
 {% set cuda_major = 0 %}
@@ -28,7 +33,7 @@ build:
     - CMAKE_GENERATOR="Ninja" {{ PYTHON }} -m pip install . -vv  # [not win]
   # Skip macOS build until https://github.com/Qiskit/qiskit-aer/issues/1689 is addressed
   skip: true  # [osx or (win64 and cuda_compiler_version != "None")]
-  number: 2
+  number: {{ build }}
   string: cuda{{ cuda_compiler_version | replace('.', '') }}_py{{ CONDA_PY }}h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}  # [cuda_compiler_version != "None"]
   string: cpu_py{{ CONDA_PY }}h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}                                                 # [cuda_compiler_version == "None"]
   script_env:
