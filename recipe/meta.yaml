@@ -2,14 +2,11 @@
 {% set version = "0.13.1" %}
 {% set build = 1 %}
 
-{% if cuda_compiler_version != "None" %}
-{% set build = build + 200 %}
-{% endif %}
-
 {% if cuda_compiler_version in (None, "None", True, False) %}
 {% set cuda_major = 0 %}
 {% else %}
 {% set cuda_major = environ.get("cuda_compiler_version", "11.2").split(".")[0] | int %}
+{% set build = build + 200 %}
 {% endif %}
 
 package:
