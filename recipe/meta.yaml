@@ -1,5 +1,13 @@
 {% set name = "qiskit-aer" %}
 {% set version = "0.13.1" %}
+{% set build = 1 %}
+
+{% if cuda_compiler_version in (None, "None", True, False) %}
+{% set cuda_major = 0 %}
+{% set build = build + 200 %}
+{% else %}
+{% set cuda_major = environ.get("cuda_compiler_version", "11.2").split(".")[0] | int %}
+{% endif %}
 
 package:
   name: {{ name|lower }}
@@ -15,21 +23,35 @@ source:
     - 0001-windows-find-blas.patch
 
 build:
-  script: CMAKE_GENERATOR="Ninja" {{ PYTHON }} -m pip install . -vv  # [not win]
+  script:
+    # cuQuantum only supports Volta+
+    # TODO: add cc90 here when we migrate to CUDA 11.8/12.0
+    - export AER_CUDA_ARCH="7.0;7.5;8.0;8.6+PTX"  # [linux64 and cuda_compiler_version != "None"]
+    - CMAKE_GENERATOR="Ninja" {{ PYTHON }} -m pip install . -vv  # [not win]
   # Skip macOS build until https://github.com/Qiskit/qiskit-aer/issues/1689 is addressed
-  skip: true  # [osx]
-  number: 1
+  skip: true  # [osx or (win64 and cuda_compiler_version != "None")]
+  number: {{ build }}
+  string: cuda{{ cuda_compiler_version | replace('.', '') }}_py{{ CONDA_PY }}h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}  # [cuda_compiler_version != "None"]
+  string: cpu_py{{ CONDA_PY }}h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}                                                 # [cuda_compiler_version == "None"]
   script_env:
     - DISABLE_DEPENDENCY_INSTALL=ON
     - DISABLE_CONAN=ON
     - CMAKE_GENERATOR=Ninja
     - CMAKE_PREFIX_PATH=%PREFIX%  # [win]
+    - CMAKE_BUILD_PARALLEL_LEVEL=1  # [linux64 and cuda_compiler_version != "None"]
+    - CUQUANTUM_ROOT=$PREFIX  # [linux64 and cuda_compiler_version != "None"]
+    - CUTENSOR_ROOT=$PREFIX  # [linux64 and cuda_compiler_version != "None"]
+    - AER_THRUST_BACKEND=CUDA  # [linux64 and cuda_compiler_version != "None"]
+    - AER_ENABLE_CUQUANTUM=ON  # [linux64 and cuda_compiler_version != "None"]
+  ignore_run_exports_from:
+    - {{ compiler('cuda') }}  # [linux64 and cuda_compiler_version != "None"]
 
 requirements:
   build:
     - {{ compiler('cxx') }}
+    - {{ compiler('cuda') }}  # [linux64 and cuda_compiler_version != "None"]
     - cmake !=3.17,>=3.8
-    - libgomp      # [linux]
+    - libgomp  # [linux]
     - llvm-openmp  # [osx]
     - ninja
   host:
@@ -44,12 +66,18 @@ requirements:
     - scikit-build >=0.11.0
     - setuptools >=40.1.0
     - spdlog
+    - cuda-version {{ cuda_compiler_version }}  # [linux64 and cuda_compiler_version != "None"]
+    # Qiskit Aer now uses both
+    - custatevec                                # [linux64 and cuda_compiler_version != "None"]
+    - cutensornet                               # [linux64 and cuda_compiler_version != "None"]
   run:
     - {{ pin_compatible('numpy') }}
     - {{ pin_compatible('muparserx', max_pin='x.x.x') }}
     - python
     - qiskit >=0.44.0
     - scipy >=1.0
+    - cuda-version >={{ cuda_major }}.2,<{{ cuda_major+1 }}  # [(cuda_compiler_version or "").startswith("11")]
+    - cudatoolkit                                            # [(cuda_compiler_version or "").startswith("11")]
 
 test:
   source_files:
@@ -79,3 +107,4 @@ extra:
   recipe-maintainers:
     - leofang
     - wshanks
+    - basnijholt
