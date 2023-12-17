@@ -82,8 +82,8 @@ test:
   source_files:
     - .stestr.conf
     - test/*
-  imports:        # [(cuda_compiler_version or "").startswith("12")]
-    - qiskit_aer  # [(cuda_compiler_version or "").startswith("12")]
+  imports:        # [not (cuda_compiler_version or "").startswith("12")]
+    - qiskit_aer  # [not (cuda_compiler_version or "").startswith("12")]
   commands:
     - pip check
     - stestr run -E test_save_statevector_for_qasm3_circuit  # Ignore tests that require qiskit_qasm3_import which is not packaged in conda-forge
