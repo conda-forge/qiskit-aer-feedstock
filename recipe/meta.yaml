@@ -1,6 +1,6 @@
 {% set name = "qiskit-aer" %}
 {% set version = "0.13.1" %}
-{% set build = 2 %}
+{% set build = 3 %}
 
 {% if cuda_compiler_version in (None, "None", True, False) %}
 {% set cuda_major = 0 %}
@@ -76,17 +76,20 @@ requirements:
     - qiskit >=0.44.0
     - scipy >=1.0
     - cuda-version >={{ cuda_major }}.2,<{{ cuda_major+1 }}  # [(cuda_compiler_version or "").startswith("11")]
-    - cudatoolkit                                            # [(cuda_compiler_version or "").startswith("11")]
+    - cuda-version >={{ cuda_major }}.0,<{{ cuda_major+1 }}  # [(cuda_compiler_version or "").startswith("12")]
 
 test:
   source_files:
     - .stestr.conf
     - test/*
-  imports:
-    - qiskit_aer
   commands:
     - pip check
-    - stestr run -E test_save_statevector_for_qasm3_circuit  # Ignore tests that require qiskit_qasm3_import which is not packaged in conda-forge
+    # perform the import test via CLI because we need to load the stub for CUDA 12
+    - export CUDA_STUB="$PREFIX/lib/stubs/libcuda.so"  # [linux and (cuda_compiler_version or "").startswith("12")]
+    - LD_PRELOAD="$CUDA_STUB" python -c "import qiskit_aer"  # [linux]
+    - LD_PRELOAD="$CUDA_STUB" stestr run -E test_save_statevector_for_qasm3_circuit  # [linux]  # Ignore tests that require qiskit_qasm3_import which is not packaged in conda-forge
+    - python -c "import qiskit_aer"                          # [win64]
+    - stestr run -E test_save_statevector_for_qasm3_circuit  # [win64]
   requires:
     - ddt
     - ipython
@@ -95,6 +98,7 @@ test:
     - pip
     - seaborn
     - stestr
+    - cuda-driver-dev  # [linux and (cuda_compiler_version or "").startswith("12")]
 
 about:
   home: https://github.com/Qiskit/qiskit-aer
