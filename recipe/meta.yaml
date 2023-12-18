@@ -82,11 +82,12 @@ test:
   source_files:
     - .stestr.conf
     - test/*
-  imports:        # [not (cuda_compiler_version or "").startswith("12")]
-    - qiskit_aer  # [not (cuda_compiler_version or "").startswith("12")]
   commands:
     - pip check
-    - stestr run -E test_save_statevector_for_qasm3_circuit  # Ignore tests that require qiskit_qasm3_import which is not packaged in conda-forge
+    # perform the import test via CLI because we need to load the stub for CUDA 12
+    - export CUDA_STUB="$PREFIX/lib/stubs/libcuda.so"  # [(cuda_compiler_version or "").startswith("12")]
+    - LD_PRELOAD="$CUDA_STUB" python -c "import qiskit_aer"
+    - LD_PRELOAD="$CUDA_STUB" stestr run -E test_save_statevector_for_qasm3_circuit  # Ignore tests that require qiskit_qasm3_import which is not packaged in conda-forge
   requires:
     - ddt
     - ipython
