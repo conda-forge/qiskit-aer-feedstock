@@ -69,7 +69,10 @@ requirements:
     - libblas
     - liblapack
     - muparserx =4.0.8
-    - nlohmann_json =3.1.2
+    # Stick the specific version used in upstream except for macOS arm64 for
+    # which there is no build
+    - nlohmann_json =3.1.2  # [not (osx and arm64)]
+    - nlohmann_json <4  # [osx and arm64]
     - numpy
     - pip
     - python
