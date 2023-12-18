@@ -28,7 +28,7 @@ source:
     # Actions C toolchain, but it does not work with the conda-forge C
     # toolchain. This patch uses a different API. It was submitted upstream in
     # https://github.com/Qiskit/qiskit-aer/pull/2016.
-    - 0001-Use-Apple-specific-API-to-determine-system-memory-on.patch
+    - 0001-Use-Apple-specific-API-to-determine-system-memory-on.patch  # [osx]
 
 build:
   script:
