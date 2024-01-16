@@ -1,6 +1,6 @@
 {% set name = "qiskit-aer" %}
 {% set version = "0.13.1" %}
-{% set build = 3 %}
+{% set build = 4 %}
 
 {% if cuda_compiler_version in (None, "None", True, False) %}
 {% set cuda_major = 0 %}
@@ -70,9 +70,9 @@ requirements:
     - liblapack
     - muparserx =4.0.8
     # Stick the specific version used in upstream except for macOS arm64 for
-    # which there is no build
+    # which there is no build, it's pinned to 3.10.2 instead because of Qiskit/qiskit-aer#1742
     - nlohmann_json =3.1.2  # [not (osx and arm64)]
-    - nlohmann_json <4  # [osx and arm64]
+    - nlohmann_json =3.10.2  # [osx and arm64]
     - numpy
     - pip
     - python
