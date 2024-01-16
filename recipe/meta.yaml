@@ -70,9 +70,9 @@ requirements:
     - liblapack
     - muparserx =4.0.8
     # Stick the specific version used in upstream except for macOS arm64 for
-    # which there is no build, it's pinned to 3.10.2 instead because of Qiskit/qiskit-aer#1742
+    # which there is no build, it's pinned to <=3.10.2 instead because of Qiskit/qiskit-aer#1742
     - nlohmann_json =3.1.2  # [not (osx and arm64)]
-    - nlohmann_json =3.10.2  # [osx and arm64]
+    - nlohmann_json <=3.10.2  # [osx and arm64]
     - numpy
     - pip
     - python
