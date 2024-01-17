@@ -1,6 +1,6 @@
 {% set name = "qiskit-aer" %}
-{% set version = "0.13.1" %}
-{% set build = 4 %}
+{% set version = "0.13.2" %}
+{% set build = 0 %}
 
 {% if cuda_compiler_version in (None, "None", True, False) %}
 {% set cuda_major = 0 %}
@@ -15,7 +15,7 @@ package:
 
 source:
   url: https://github.com/Qiskit/{{ name }}/archive/refs/tags/{{ version }}.tar.gz
-  sha256: d87064b5e60a5bf2a88019d2b71e217f33d2009793fa7edea0bf08cf30e326e5
+  sha256: 1a3cffc2830146e3ad4136de655c64b3aa45b3e04cceb3571e74806d9d3e7c99
   patches:
     # qiskit-aer builds against a bundled blas on Windows. This patch adds a
     # USE_BUNDLED_BLAS_WIN cmake option to search for an installed blas library
@@ -39,7 +39,7 @@ build:
   skip: true  # [(win64 and cuda_compiler != "None") or cuda_compiler_version not in ("None", "11.8", "12.0")]
   number: {{ build }}
   string: cuda{{ cuda_compiler_version | replace('.', '') }}_py{{ CONDA_PY }}h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}  # [cuda_compiler_version != "None"]
-  string: cpu_py{{ CONDA_PY }}h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}                                                 # [cuda_compiler_version == "None"]
+  string: cpu_py{{ CONDA_PY }}h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}  # [cuda_compiler_version == "None"]
   script_env:
     - DISABLE_DEPENDENCY_INSTALL=ON
     - DISABLE_CONAN=ON
