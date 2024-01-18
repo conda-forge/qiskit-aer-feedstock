@@ -23,19 +23,12 @@ source:
     # This patch was accepted in https://github.com/Qiskit/qiskit-aer/pull/1940
     # and can be removed from the receipe with the 0.14 release.
     - 0001-windows-find-blas.patch
-    # qiskit-aer uses an API from unistd.h to determine the total system memory
-    # at runtime. This works for Linux and for macOS when using the GitHub
-    # Actions C toolchain, but it does not work with the conda-forge C
-    # toolchain. This patch uses a different API. It was submitted upstream in
-    # https://github.com/Qiskit/qiskit-aer/pull/2016.
-    - 0001-Use-Apple-specific-API-to-determine-system-memory-on.patch  # [osx]
 
 build:
   script:
     # cuQuantum only supports Volta+
     - export AER_CUDA_ARCH="7.0;7.5;8.0;8.6;9.0+PTX"  # [cuda_compiler != "None"]
     - CMAKE_GENERATOR="Ninja" {{ PYTHON }} -m pip install . -vv  # [not win]
-  # Skip macOS build until https://github.com/Qiskit/qiskit-aer/issues/1689 is addressed
   skip: true  # [(win64 and cuda_compiler != "None") or cuda_compiler_version not in ("None", "11.8", "12.0")]
   number: {{ build }}
   string: cuda{{ cuda_compiler_version | replace('.', '') }}_py{{ CONDA_PY }}h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}  # [cuda_compiler_version != "None"]
@@ -102,14 +95,15 @@ test:
     # perform the import test via CLI because we need to load the stub for CUDA 12
     - export CUDA_STUB="$PREFIX/lib/stubs/libcuda.so"  # [linux and (cuda_compiler_version or "").startswith("12")]
     - LD_PRELOAD="$CUDA_STUB" python -c "import qiskit_aer"  # [linux]
-    - LD_PRELOAD="$CUDA_STUB" stestr run -E test_save_statevector_for_qasm3_circuit  # [linux]  # Ignore tests that require qiskit_qasm3_import which is not packaged in conda-forge
-    - python -c "import qiskit_aer"                          # [win64]
-    - stestr run -E test_save_statevector_for_qasm3_circuit  # [win64]
+    - python -c "import qiskit_aer"                          # [not linux and build_platform == target_platform]
+    # Ignore tests that require qiskit_qasm3_import which is not packaged in conda-forge by using `-E test_save_statevector_for qasm3_circuit`
+    - stestr run -E test_save_statevector_for_qasm3_circuit  # [linux and not cuda_compiler_version]
+    - LD_PRELOAD="$CUDA_STUB" stestr run -E test_save_statevector_for_qasm3_circuit  -E _GPU  # [linux and cuda_compiler_version]
+    - stestr run -E test_save_statevector_for_qasm3_circuit  # [not linux and build_platform == target_platform]
   requires:
     - ddt
     - ipython
     - matplotlib-base
-    - numpy <1.25.0  # Temporary pin to avoid deprecation warnings, following https://github.com/Qiskit/qiskit-aer/pull/1871
     - pip
     - seaborn
     - stestr
