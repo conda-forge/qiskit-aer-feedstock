@@ -1,17 +1,26 @@
-From e11c99996d2f43c2166586f69273c930ec377342 Mon Sep 17 00:00:00 2001
+From e8f2e1f358115dcbe45c77046b599b5b26f88646 Mon Sep 17 00:00:00 2001
 From: Will Shanks <willshanks@us.ibm.com>
-Date: Fri, 15 Sep 2023 11:20:22 -0400
-Subject: [PATCH] windows find blas
+Date: Tue, 28 Nov 2023 20:37:43 -0500
+Subject: [PATCH] Add CMake option `USE_BUNDLED_BLAS_WIN` (#1940)
 
+This option controls whether CMake uses the bundled OpenBLAS library
+when building on Windows (defaults to True). Having this option allows a
+user to build qiskit-aer against a different system BLAS without needing
+to specify a full path using the `AER_BLAS_LIB_PATH` option.
+
+Co-authored-by: Jun Doi <doichan@jp.ibm.com>
 ---
- CMakeLists.txt | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ CMakeLists.txt                                        |  4 +++-
+ CONTRIBUTING.md                                       | 10 ++++++++++
+ releasenotes/notes/windows-blas-42b3dbc170c5ae94.yaml |  6 ++++++
+ 3 files changed, 19 insertions(+), 1 deletion(-)
+ create mode 100644 releasenotes/notes/windows-blas-42b3dbc170c5ae94.yaml
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 5a3bc55c..c3785f2d 100755
+index 517ce982..3d158eb7 100755
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -43,6 +43,8 @@ endif()
+@@ -78,6 +78,8 @@ endif()
  option(STATIC_LINKING "Specify if we want statically link the executable (for
  						redistribution mainly)" FALSE)
  option(BUILD_TESTS "Specify whether we want to build tests or not" FALSE)
@@ -20,7 +29,7 @@ index 5a3bc55c..c3785f2d 100755
  
  # Allow disabling conan for downstream package managers. Requires all libraries to be present in path
  # Default is value of environment variable if defined or ON
-@@ -202,7 +204,7 @@ else()
+@@ -237,7 +239,7 @@ else()
  		  set(BLA_VENDOR "OpenBLAS")
  		endif()
  	endif()
@@ -29,6 +38,39 @@ index 5a3bc55c..c3785f2d 100755
  		message(STATUS "Uncompressing OpenBLAS static library...")
  		set(WIN_ARCH "win64" )
  		if("${CMAKE_SIZEOF_VOID_P}" STREQUAL "4") # Checking if win32 build
+diff --git a/CONTRIBUTING.md b/CONTRIBUTING.md
+index a5c49588..4f39f0b9 100644
+--- a/CONTRIBUTING.md
++++ b/CONTRIBUTING.md
+@@ -966,6 +966,16 @@ These are the flags:
+     Default: No value.
+     Example: ``python ./setup.py bdist_wheel -- -DAER_BLAS_LIB_PATH=/path/to/look/for/blas/``
+ 
++* USE_BUNDLED_BLAS_WIN
++
++    Tells CMake to use the bundled OpenBLAS library vendored into the source code when building on Windows.
++    When this option is set to `False`, CMake will use its standard method to search for the BLAS library aginst which to link instead of using the vendored version.
++    The `AER_BLAS_LIB_PATH` option takes precedence over this option.
++
++    Values: True|False
++    Default: True
++    Example: ``python ./setup.py bdist_wheel -- -DUSE_BUNDLED_BLAS_WIN=FALSE``
++
+ * BUILD_TESTS
+ 
+     It will tell the build system to build C++ tests along with the simulator.
+diff --git a/releasenotes/notes/windows-blas-42b3dbc170c5ae94.yaml b/releasenotes/notes/windows-blas-42b3dbc170c5ae94.yaml
+new file mode 100644
+index 00000000..2a17a554
+--- /dev/null
++++ b/releasenotes/notes/windows-blas-42b3dbc170c5ae94.yaml
+@@ -0,0 +1,6 @@
++---
++features:
++  - |
++    Added CMake option ``USE_BUNDLED_BLAS_WIN`` which allows CMake to search
++    for a BLAS library against which to link instead of using the OpenBLAS
++    library bundled into the repo.
 -- 
-2.42.0
+2.41.0
 
