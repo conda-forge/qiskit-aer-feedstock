@@ -97,8 +97,8 @@ test:
     - LD_PRELOAD="$CUDA_STUB" python -c "import qiskit_aer"  # [linux]
     - python -c "import qiskit_aer"                          # [not linux and build_platform == target_platform]
     # Ignore tests that require qiskit_qasm3_import which is not packaged in conda-forge by using `-E test_save_statevector_for qasm3_circuit`
-    - stestr run -E test_save_statevector_for_qasm3_circuit  # [linux and not cuda_compiler_version]
-    - LD_PRELOAD="$CUDA_STUB" stestr run -E test_save_statevector_for_qasm3_circuit  -E _GPU  # [linux and cuda_compiler_version]
+    - stestr run -E test_save_statevector_for_qasm3_circuit  # [linux and cuda_compiler_version == "None"]
+    - LD_PRELOAD="$CUDA_STUB" stestr run -E 'test_save_statevector_for_qasm3_circuit|_GPU'  # [linux and cuda_compiler_version != "None"]
     - stestr run -E test_save_statevector_for_qasm3_circuit  # [not linux and build_platform == target_platform]
   requires:
     - ddt
