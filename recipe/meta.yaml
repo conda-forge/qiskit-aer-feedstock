@@ -103,6 +103,7 @@ test:
   requires:
     - ddt
     - cvxpy
+    - pybind11  # Temporary workaround for https://github.com/cvxpy/cvxpy/issues/2330
     - ipython
     - matplotlib-base
     - pip
