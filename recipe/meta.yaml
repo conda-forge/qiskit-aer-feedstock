@@ -102,6 +102,7 @@ test:
     - stestr run -E test_save_statevector_for_qasm3_circuit  # [not linux and build_platform == target_platform]
   requires:
     - ddt
+    - cvxpy
     - ipython
     - matplotlib-base
     - pip
