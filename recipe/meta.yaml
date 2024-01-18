@@ -101,9 +101,8 @@ test:
     - LD_PRELOAD="$CUDA_STUB" stestr run -E 'test_save_statevector_for_qasm3_circuit|_GPU'  # [linux and cuda_compiler_version != "None"]
     - stestr run -E test_save_statevector_for_qasm3_circuit  # [not linux and build_platform == target_platform]
   requires:
+    - python <3.12.1  # Workaround until https://github.com/testing-cabal/testtools/pull/371 is released
     - ddt
-    - cvxpy
-    - pybind11  # Temporary workaround for https://github.com/cvxpy/cvxpy/issues/2330
     - ipython
     - matplotlib-base
     - pip
