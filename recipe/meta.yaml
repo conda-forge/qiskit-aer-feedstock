@@ -23,6 +23,8 @@ source:
     # This patch was accepted in https://github.com/Qiskit/qiskit-aer/pull/1940
     # and can be removed from the receipe with the 0.14 release.
     - 0001-windows-find-blas.patch
+    # muparserx usage was removed in https://github.com/Qiskit/qiskit-aer/pull/1884
+    - 0001-Remove-muparserx-from-cmake-configuration.patch
 
 build:
   script:
