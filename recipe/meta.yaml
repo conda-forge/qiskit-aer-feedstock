@@ -1,6 +1,6 @@
 {% set name = "qiskit-aer" %}
 {% set version = "0.13.2" %}
-{% set build = 1 %}
+{% set build = 2 %}
 
 {% if cuda_compiler_version in (None, "None", True, False) %}
 {% set cuda_major = 0 %}
@@ -45,12 +45,13 @@ build:
     - AER_ENABLE_CUQUANTUM=ON  # [cuda_compiler != "None"]
   ignore_run_exports_from:
     - {{ compiler('cuda') }}  # [(cuda_compiler_version or "").startswith("11")]
+    # Only headers used from spdlog
+    - spdlog
 
 requirements:
   build:
     - python                                 # [build_platform != target_platform]
     - cross-python_{{ target_platform }}     # [build_platform != target_platform]
-    - numpy                                  # [build_platform != target_platform]
     - pybind11                               # [build_platform != target_platform]
     - {{ compiler('cxx') }}
     - {{ compiler('cuda') }}  # [cuda_compiler != "None"]
@@ -61,12 +62,11 @@ requirements:
   host:
     - libblas
     - liblapack
-    - muparserx =4.0.8
-    # Stick the specific version used in upstream except for macOS arm64 for
-    # which there is no build, it's pinned to <=3.10.2 instead because of Qiskit/qiskit-aer#1742
-    - nlohmann_json =3.1.2  # [not (osx and arm64)]
-    - nlohmann_json <=3.10.2  # [osx and arm64]
-    - numpy
+    # Upstream builds with 3.1.2 but that has no osx arm64 build. Instead we
+    # pin the latest known working version. See
+    # https://github.com/Qiskit/qiskit-aer/issues/1742 where problems were
+    # reported with 3.10.3
+    - nlohmann_json <=3.10.2
     - pip
     - python
     - pybind11
@@ -78,10 +78,10 @@ requirements:
     - custatevec                                # [cuda_compiler != "None"]
     - cutensornet                               # [cuda_compiler != "None"]
   run:
-    - {{ pin_compatible('numpy') }}
     - {{ pin_compatible('muparserx', max_pin='x.x.x') }}
     - python
-    - qiskit >=0.44.0
+    - numpy >=1.16.3
+    - qiskit >=0.45.0
     - scipy >=1.0
     - cuda-version >={{ cuda_major }}.2,<{{ cuda_major+1 }}  # [(cuda_compiler_version or "").startswith("11")]
     - cuda-version >={{ cuda_major }}.0,<{{ cuda_major+1 }}  # [(cuda_compiler_version or "").startswith("12")]
