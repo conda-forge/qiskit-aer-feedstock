@@ -82,6 +82,7 @@ requirements:
   run:
     - python
     - numpy >=1.16.3
+    - psutil >=5
     - qiskit >=0.45.0
     - scipy >=1.0
     - cuda-version >={{ cuda_major }}.2,<{{ cuda_major+1 }}  # [(cuda_compiler_version or "").startswith("11")]
