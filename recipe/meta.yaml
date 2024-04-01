@@ -80,7 +80,6 @@ requirements:
     - custatevec                                # [cuda_compiler != "None"]
     - cutensornet                               # [cuda_compiler != "None"]
   run:
-    - {{ pin_compatible('muparserx', max_pin='x.x.x') }}
     - python
     - numpy >=1.16.3
     - qiskit >=0.45.0
