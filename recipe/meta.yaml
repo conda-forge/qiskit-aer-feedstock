@@ -54,7 +54,7 @@ requirements:
   build:
     - python                                 # [build_platform != target_platform]
     - cross-python_{{ target_platform }}     # [build_platform != target_platform]
-    - pybind11                               # [build_platform != target_platform]
+    - pybind11 >=2.12.0                      # [build_platform != target_platform]
     - {{ compiler('cxx') }}
     - {{ compiler('cuda') }}  # [cuda_compiler != "None"]
     - cmake !=3.17,>=3.8
@@ -71,7 +71,7 @@ requirements:
     - nlohmann_json <=3.10.2
     - pip
     - python
-    - pybind11
+    - pybind11 >=2.12.0  # This constraint is for CUDA 12 and numpy 2.0, not for qiskit-aer
     - scikit-build >=0.11.0
     - setuptools >=40.1.0
     - spdlog
