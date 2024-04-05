@@ -16,15 +16,6 @@ package:
 source:
   url: https://github.com/Qiskit/{{ name }}/archive/refs/tags/{{ version }}.tar.gz
   sha256: 4bf943208f57455199959b4203a4208a5f38cb75d9348055d4f80d5c85da8c90
-  patches:
-    # qiskit-aer builds against a bundled blas on Windows. This patch adds a
-    # USE_BUNDLED_BLAS_WIN cmake option to search for an installed blas library
-    # instead
-    # This patch was accepted in https://github.com/Qiskit/qiskit-aer/pull/1940
-    # and can be removed from the receipe with the 0.14 release.
-    - 0001-windows-find-blas.patch
-    # muparserx usage was removed in https://github.com/Qiskit/qiskit-aer/pull/1884
-    - 0001-Remove-muparserx-from-cmake-configuration.patch
 
 build:
   script:
