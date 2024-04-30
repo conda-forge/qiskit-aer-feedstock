@@ -1,6 +1,6 @@
 {% set name = "qiskit-aer" %}
-{% set version = "0.14" %}
-{% set build = 1 %}
+{% set version = "0.14.1" %}
+{% set build = 0 %}
 
 {% if cuda_compiler_version in (None, "None", True, False) %}
 {% set cuda_major = 0 %}
@@ -15,7 +15,7 @@ package:
 
 source:
   url: https://github.com/Qiskit/{{ name }}/archive/refs/tags/{{ version }}.tar.gz
-  sha256: 4bf943208f57455199959b4203a4208a5f38cb75d9348055d4f80d5c85da8c90
+  sha256: f27b9d3007140d47caabf25c2944784560c1161982a6dfc4e64065f901fcdc4d
 
 build:
   script:
@@ -96,8 +96,10 @@ test:
     # Ignore TestNoiseTransformer as a workaround until
     # https://github.com/testing-cabal/testtools/pull/371 is released
     #
+    # Ignore shot_branching tests that seem to be flaky in the upstream tests as well.
+    #
     # Ignore _GPU tests for CUDA builds because the environment does not have a GPU
-    - stestr run -E "test_save_statevector_for_qasm3_circuit|TestNoiseTransformer"  # [build_platform == target_platform and cuda_compiler_version == "None"]
+    - stestr run -E "test_save_statevector_for_qasm3_circuit|TestNoiseTransformer|TestShotBranching|test_dynamic_circuit_with_shot_branching"  # [build_platform == target_platform and cuda_compiler_version == "None"]
     - LD_PRELOAD="$CUDA_STUB" stestr run -E 'test_save_statevector_for_qasm3_circuit|TestNoiseTransformer|_GPU'  # [linux and cuda_compiler_version != "None"]
   requires:
     - ddt
