@@ -1,6 +1,6 @@
 {% set name = "qiskit-aer" %}
-{% set version = "0.14.2" %}
-{% set build = 1 %}
+{% set version = "0.15" %}
+{% set build = 0 %}
 
 {% if cuda_compiler_version in (None, "None", True, False) %}
 {% set cuda_major = 0 %}
@@ -15,10 +15,7 @@ package:
 
 source:
   url: https://github.com/Qiskit/{{ name }}/archive/refs/tags/{{ version }}.tar.gz
-  sha256: cc7b573998f4a353b95c8ee2f8339a4ab19d679d38c33ed0e561d4454c6999bd
-  patches:
-    # Fix for CUDA 12.5 from https://github.com/Qiskit/qiskit-aer/pull/2186
-    - 0001-Adjust-thrust_kernels.hpp-for-CUDA-12.5.patch
+  sha256: dd3799fedeb7c552363939e39f4b43ff7ba26b28137ec82aeb7f109a81bad225
 
 build:
   script:
@@ -106,7 +103,6 @@ test:
     - ipython
     - matplotlib-base
     - pip
-    - qiskit <1.2  # Some tests fail with Qiskit 1.2. This pin can be removed with qiskit-aer 0.15
     - seaborn
     - stestr
     - cuda-driver-dev  # [linux and (cuda_compiler_version or "").startswith("12")]
