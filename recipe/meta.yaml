@@ -16,6 +16,9 @@ package:
 source:
   url: https://github.com/Qiskit/{{ name }}/archive/refs/tags/{{ version }}.tar.gz
   sha256: cc7b573998f4a353b95c8ee2f8339a4ab19d679d38c33ed0e561d4454c6999bd
+  patches:
+    # Fix for CUDA 12.5 from https://github.com/Qiskit/qiskit-aer/pull/2186
+    - 0001-Adjust-thrust_kernels.hpp-for-CUDA-12.5.patch
 
 build:
   script:
@@ -93,19 +96,17 @@ test:
     # Ignore tests that require qiskit_qasm3_import which is not packaged in
     # conda-forge by using `-E test_save_statevector_for_qasm3_circuit`
     #
-    # Ignore TestNoiseTransformer as a workaround until
-    # https://github.com/testing-cabal/testtools/pull/371 is released
-    #
     # Ignore shot_branching tests that seem to be flaky in the upstream tests as well.
     #
     # Ignore _GPU tests for CUDA builds because the environment does not have a GPU
-    - stestr run -E "test_save_statevector_for_qasm3_circuit|TestNoiseTransformer|TestShotBranching|test_dynamic_circuit_with_shot_branching"  # [build_platform == target_platform and cuda_compiler_version == "None"]
-    - LD_PRELOAD="$CUDA_STUB" stestr run -E 'test_save_statevector_for_qasm3_circuit|TestNoiseTransformer|_GPU'  # [linux and cuda_compiler_version != "None"]
+    - stestr run -E "test_save_statevector_for_qasm3_circuit|TestShotBranching|test_dynamic_circuit_with_shot_branching"  # [build_platform == target_platform and cuda_compiler_version == "None"]
+    - LD_PRELOAD="$CUDA_STUB" stestr run -E 'test_save_statevector_for_qasm3_circuit|_GPU'  # [linux and cuda_compiler_version != "None"]
   requires:
     - ddt
     - ipython
     - matplotlib-base
     - pip
+    - qiskit <1.2  # Some tests fail with Qiskit 1.2. This pin can be removed with qiskit-aer 0.15
     - seaborn
     - stestr
     - cuda-driver-dev  # [linux and (cuda_compiler_version or "").startswith("12")]
