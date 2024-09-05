@@ -94,10 +94,11 @@ test:
     # conda-forge by using `-E test_save_statevector_for_qasm3_circuit`
     #
     # Ignore shot_branching tests that seem to be flaky in the upstream tests as well.
-    #
-    # Ignore _GPU tests for CUDA builds because the environment does not have a GPU
     - stestr run -E "test_save_statevector_for_qasm3_circuit|TestShotBranching|test_dynamic_circuit_with_shot_branching"  # [build_platform == target_platform and cuda_compiler_version == "None"]
-    - LD_PRELOAD="$CUDA_STUB" stestr run -E 'test_save_statevector_for_qasm3_circuit|_GPU'  # [linux and cuda_compiler_version != "None"]
+
+    # The following used to work but broke with 0.15.0. See https://github.com/Qiskit/qiskit-aer/issues/2213
+    # Ignore _GPU tests for CUDA builds because the environment does not have a GPU
+    # - LD_PRELOAD="$CUDA_STUB" stestr run -E 'test_save_statevector_for_qasm3_circuit|_GPU'  # [linux and cuda_compiler_version != "None"]
   requires:
     - ddt
     - ipython
