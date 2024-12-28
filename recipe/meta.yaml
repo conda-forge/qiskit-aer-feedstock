@@ -94,7 +94,11 @@ test:
     # conda-forge by using `-E test_save_statevector_for_qasm3_circuit`
     #
     # Ignore shot_branching tests that seem to be flaky in the upstream tests as well.
-    - stestr run -E "test_save_statevector_for_qasm3_circuit|TestShotBranching|test_dynamic_circuit_with_shot_branching"  # [build_platform == target_platform and cuda_compiler_version == "None"]
+    #
+    # Ignore save_expval tests that do not work with Qiskit 1.3. These tests
+    # might be fixed in qiskit-aer 0.16. See
+    # https://github.com/Qiskit/qiskit-aer/pull/2265
+    - stestr run -E "test_save_statevector_for_qasm3_circuit|TestShotBranching|test_dynamic_circuit_with_shot_branching|TestSaveExpectationValueTests.test_save_expval_nonstabilizer_hermitian|TestSaveExpectationValueTests.test_save_expval_var_nonstabilizer_hermitian"  # [build_platform == target_platform and cuda_compiler_version == "None"]
 
     # The following used to work but broke with 0.15.0. See https://github.com/Qiskit/qiskit-aer/issues/2213
     # Ignore _GPU tests for CUDA builds because the environment does not have a GPU
