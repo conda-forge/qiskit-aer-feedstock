@@ -1,6 +1,6 @@
 {% set name = "qiskit-aer" %}
 {% set version = "0.15.1" %}
-{% set build = 0 %}
+{% set build = 1 %}
 
 {% if cuda_compiler_version in (None, "None", True, False) %}
 {% set cuda_major = 0 %}
@@ -22,7 +22,7 @@ build:
     # cuQuantum only supports Volta+
     - export AER_CUDA_ARCH="7.0;7.5;8.0;8.6;9.0+PTX"  # [cuda_compiler != "None"]
     - CMAKE_GENERATOR="Ninja" {{ PYTHON }} -m pip install . -vv  # [not win]
-  skip: true  # [(win64 and cuda_compiler != "None") or cuda_compiler_version not in ("None", "11.8", "12.5")]
+  skip: true  # [(win64 and cuda_compiler != "None") or cuda_compiler_version not in ("None", "11.8", "12.6")]
   number: {{ build }}
   string: cuda{{ cuda_compiler_version | replace('.', '') }}_py{{ CONDA_PY }}h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}  # [cuda_compiler_version != "None"]
   string: cpu_py{{ CONDA_PY }}h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}  # [cuda_compiler_version == "None"]
@@ -94,7 +94,11 @@ test:
     # conda-forge by using `-E test_save_statevector_for_qasm3_circuit`
     #
     # Ignore shot_branching tests that seem to be flaky in the upstream tests as well.
-    - stestr run -E "test_save_statevector_for_qasm3_circuit|TestShotBranching|test_dynamic_circuit_with_shot_branching"  # [build_platform == target_platform and cuda_compiler_version == "None"]
+    #
+    # Ignore save_expval tests that do not work with Qiskit 1.3. These tests
+    # might be fixed in qiskit-aer 0.16. See
+    # https://github.com/Qiskit/qiskit-aer/pull/2265
+    - stestr run -E "test_save_statevector_for_qasm3_circuit|TestShotBranching|test_dynamic_circuit_with_shot_branching|TestSaveExpectationValueTests.test_save_expval_nonstabilizer_hermitian|TestSaveExpectationValueTests.test_save_expval_var_nonstabilizer_hermitian"  # [build_platform == target_platform and cuda_compiler_version == "None"]
 
     # The following used to work but broke with 0.15.0. See https://github.com/Qiskit/qiskit-aer/issues/2213
     # Ignore _GPU tests for CUDA builds because the environment does not have a GPU
