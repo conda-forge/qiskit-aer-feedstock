@@ -1,5 +1,5 @@
 {% set name = "qiskit-aer" %}
-{% set version = "0.16.2" %}
+{% set version = "0.16.3" %}
 {% set build = 0 %}
 
 {% if cuda_compiler_version in (None, "None", True, False) %}
@@ -15,7 +15,7 @@ package:
 
 source:
   url: https://github.com/Qiskit/{{ name }}/archive/refs/tags/{{ version }}.tar.gz
-  sha256: 7a6736cfa072521bac552473c14e0566540d613bdffb1008510e545296d4f1f2
+  sha256: 047736adf9248401af0448f3ee55b4a297bc0eeba04921bb32d344ed6062d47f
 
 build:
   script:
