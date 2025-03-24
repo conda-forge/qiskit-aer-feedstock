@@ -1,6 +1,6 @@
 {% set name = "qiskit-aer" %}
 {% set version = "0.17" %}
-{% set build = 0 %}
+{% set build = 1 %}
 
 {% if cuda_compiler_version in (None, "None", True, False) %}
 {% set cuda_major = 0 %}
@@ -61,6 +61,11 @@ requirements:
     # https://github.com/Qiskit/qiskit-aer/issues/1742 where problems were
     # reported with 3.10.3
     - nlohmann_json <=3.10.2
+    # In early 2025, mkl started getting installed randomly on Linux about 50%
+    # of the time. When this happens the build seems to link to it but not add
+    # it to the run exports. Maybe mkl builds could work but we have been doing
+    # fine without them so just make sure they do not happen for now.
+    - nomkl
     - pip
     - python
     - pybind11 >=2.12.0  # This constraint is for CUDA 12 and numpy 2.0, not for qiskit-aer
