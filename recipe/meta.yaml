@@ -1,6 +1,6 @@
 {% set name = "qiskit-aer" %}
 {% set version = "0.17.1" %}
-{% set build = 0 %}
+{% set build = 1 %}
 
 {% if cuda_compiler_version in (None, "None", True, False) %}
 {% set cuda_major = 0 %}
@@ -101,10 +101,15 @@ test:
     #
     # Ignore shot_branching tests that seem to be flaky in the upstream tests as well.
     #
-    # Ignore save_expval tests that do not work with Qiskit 1.3. These tests
-    # might be fixed in qiskit-aer 0.16. See
-    # https://github.com/Qiskit/qiskit-aer/pull/2265
-    - stestr run -E "test_save_statevector_for_qasm3_circuit|TestShotBranching|test_dynamic_circuit_with_shot_branching|TestSaveExpectationValueTests.test_save_expval_nonstabilizer_hermitian|TestSaveExpectationValueTests.test_save_expval_var_nonstabilizer_hermitian"  # [build_platform == target_platform and cuda_compiler_version == "None"]
+    # Ignore test_switch_register_with_classical_expression because Qiskit 2.1
+    # broke these tests. It appears qiskit-aer code was wrong (passing list of
+    # CLbit to Var() when only passing a single Clbit is documented as
+    # supported). See
+    # https://github.com/Qiskit/qiskit-aer/pull/2361
+    #
+    # Ignore test_mps_svd_method because it sometimes fails with `Wrong SVD calculations: A != USV*`
+    # on Windows. No idea why.
+    - stestr run -E "test_save_statevector_for_qasm3_circuit|TestShotBranching|test_dynamic_circuit_with_shot_branching|test_switch_register_with_classical_expression|test_mps_svd_method"  # [build_platform == target_platform and cuda_compiler_version == "None"]
 
     # The following used to work but broke with 0.15.0. See https://github.com/Qiskit/qiskit-aer/issues/2213
     # Ignore _GPU tests for CUDA builds because the environment does not have a GPU
@@ -113,9 +118,12 @@ test:
     - ddt
     - ipython
     - matplotlib-base
+    - numpy
     - pip
     - seaborn
+    - scipy
     - stestr
+    - sympy
     - cuda-driver-dev  # [linux and (cuda_compiler_version or "").startswith("12")]
 
 about:
