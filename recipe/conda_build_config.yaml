@@ -1,0 +1,5 @@
+# Pin to vs2019 because vs2022 results in an out of heap space error
+c_compiler:    # [win]
+  - vs2019       # [win]
+cxx_compiler:  # [win]
+  - vs2019       # [win]
