@@ -31,7 +31,7 @@ build:
     - DISABLE_CONAN=ON
     - CMAKE_GENERATOR=Ninja
     - CMAKE_PREFIX_PATH=%PREFIX%  # [win]
-    - CMAKE_BUILD_PARALLEL_LEVEL=1  # [cuda_compiler_version != "None"]
+    - CMAKE_BUILD_PARALLEL_LEVEL=1  # [win or cuda_compiler_version != "None"]
     - CUQUANTUM_ROOT=$PREFIX        # [cuda_compiler_version != "None"]
     - CUTENSOR_ROOT=$PREFIX         # [cuda_compiler_version != "None"]
     - AER_THRUST_BACKEND=CUDA       # [cuda_compiler_version != "None"]
