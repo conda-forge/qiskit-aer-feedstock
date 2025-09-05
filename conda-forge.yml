@@ -3,8 +3,10 @@ azure:
   settings_linux:
     swapfile_size: 10GiB
   settings_win:
-    pool:
-      vmImage: windows-2019
+    variables:
+      SET_PAGEFILE: 'True'
+      CONDA_BLD_PATH: C:\\bld\\
+      MINIFORGE_HOME: C:\Miniforge
 build_platform:
   osx_arm64: osx_64
 conda_build:
