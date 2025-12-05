@@ -1,6 +1,6 @@
 {% set name = "qiskit-aer" %}
 {% set version = "0.17.2" %}
-{% set build = 1 %}
+{% set build = 2 %}
 
 {% if cuda_compiler_version in (None, "None", True, False) %}
 {% set cuda_major = 0 %}
@@ -16,13 +16,17 @@ package:
 source:
   url: https://github.com/Qiskit/{{ name }}/archive/refs/tags/{{ version }}.tar.gz
   sha256: 0231c74ae23d7dcaef664c39e57f800ee5174f73821a60f328ca3fe542266950
+  patches:
+    # Update cmake configuration to base build flags on target architecture instead of host
+    # Submitted upstream in https://github.com/Qiskit/qiskit-aer/pull/2390
+    - 0001-Base-x86-compiler-flags-on-target-rather-than-host-s.patch
 
 build:
   script:
     # cuQuantum only supports Volta+
     - export AER_CUDA_ARCH="7.0;7.5;8.0;8.6;9.0+PTX"  # [cuda_compiler_version != "None"]
     - CMAKE_GENERATOR="Ninja" {{ PYTHON }} -m pip install . -vv  # [not win]
-  skip: true  # [win64 and cuda_compiler_version != "None"]
+  skip: true  # [cuda_compiler_version != "None" and not (linux and x86_64)]
   number: {{ build }}
   string: cuda{{ cuda_compiler_version | replace('.', '') }}_py{{ CONDA_PY }}h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}  # [cuda_compiler_version != "None"]
   string: cpu_py{{ CONDA_PY }}h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}  # [cuda_compiler_version == "None"]
