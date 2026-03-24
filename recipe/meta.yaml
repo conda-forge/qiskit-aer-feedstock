@@ -20,6 +20,14 @@ source:
     # Update cmake configuration to base build flags on target architecture instead of host
     # Submitted upstream in https://github.com/Qiskit/qiskit-aer/pull/2390
     - 0001-Base-x86-compiler-flags-on-target-rather-than-host-s.patch
+    # Replace lambdas in pybind11 init method with direct references to class
+    # constructors to avoid ambiguous template compile error on gcc 14
+    # Submitted upstream in https://github.com/Qiskit/qiskit-aer/pull/2416
+    - 0002-Fix-pybind11-init-template-errors.patch
+    # Switch from pybind11 enum_ to native_enum to avoid ambiguous template
+    # compile error on gcc 14
+    # Submitted upstream in https://github.com/Qiskit/qiskit-aer/pull/2417
+    - 0003-Switch-from-pybind11-enum_-to-native_enum.patch
 
 build:
   script:

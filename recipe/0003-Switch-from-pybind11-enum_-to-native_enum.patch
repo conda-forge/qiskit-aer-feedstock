@@ -1,0 +1,91 @@
+From e6a33a5ef0eb00b69743daa6a96226262ebd7a93 Mon Sep 17 00:00:00 2001
+From: Will Shanks <willshanks@us.ibm.com>
+Date: Thu, 26 Mar 2026 11:16:05 -0400
+Subject: [PATCH 3/3] Switch from pybind11 enum_ to native_enum
+
+The motivation for switching is that `enum_` triggers a bug in
+pybind11 when using gcc 14. In particular, this bug:
+
+https://github.com/pybind/pybind11/issues/5565
+
+which has already been patched in pybind11 but the patch has not yet
+been released. Code within pybind11 used for generating the special
+methods was triggering an ambiguous template instantiation.
+
+There are side effects to these changes but they should not affect the
+way these undocumented enums are used within the codebase (and a GitHub
+search reveals no external usage):
+
+* The `arithmetic` tag was dropped since the current usage does not use
+  Python mathematical operators on these classes. This change removes
+  methods like `__xor__` from the Python classes.
+* The `export_values` call was dropped. That promotes the enum members
+  into the module namespace, but all current use references them as
+  class members of the enum.
+* The classes are standard Python `enum.Enum` instances rather than
+  pybind11 classes following the same interface.
+---
+ pyproject.toml                                       |  2 +-
+ qiskit_aer/backends/wrappers/aer_circuit_binding.hpp | 11 ++++++-----
+ 2 files changed, 7 insertions(+), 6 deletions(-)
+
+diff --git a/pyproject.toml b/pyproject.toml
+index d67c877a..a213764e 100644
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -5,7 +5,7 @@ requires = [
+   "scikit-build>=0.11.0",
+   "cmake!=3.17.1,!=3.17.0",
+   "ninja",
+-  "pybind11>2.6",
++  "pybind11>=3.0",
+ ]
+ build-backend = "setuptools.build_meta"
+ 
+diff --git a/qiskit_aer/backends/wrappers/aer_circuit_binding.hpp b/qiskit_aer/backends/wrappers/aer_circuit_binding.hpp
+index a2f4af5c..efb11fdc 100644
+--- a/qiskit_aer/backends/wrappers/aer_circuit_binding.hpp
++++ b/qiskit_aer/backends/wrappers/aer_circuit_binding.hpp
+@@ -18,6 +18,7 @@
+ #include "misc/warnings.hpp"
+ DISABLE_WARNING_PUSH
+ #include <pybind11/pybind11.h>
++#include <pybind11/native_enum.h>
+ DISABLE_WARNING_POP
+ #if defined(_MSC_VER)
+ #undef snprintf
+@@ -41,12 +42,12 @@ using namespace AER;
+ template <typename MODULE>
+ void bind_aer_circuit(MODULE m) {
+ 
+-  py::enum_<Operations::UnaryOp>(m, "AerUnaryOp", py::arithmetic())
++  py::native_enum<Operations::UnaryOp>(m, "AerUnaryOp", "enum.Enum", "Internal Aer UnaryOp class")
+       .value("BitNot", Operations::UnaryOp::BitNot)
+       .value("LogicNot", Operations::UnaryOp::LogicNot)
+-      .export_values();
++      .finalize();
+ 
+-  py::enum_<Operations::BinaryOp>(m, "AerBinaryOp", py::arithmetic())
++  py::native_enum<Operations::BinaryOp>(m, "AerBinaryOp", "enum.Enum", "Internal Aer BinaryOp class")
+       .value("BitAnd", Operations::BinaryOp::BitAnd)
+       .value("BitOr", Operations::BinaryOp::BitOr)
+       .value("BitXor", Operations::BinaryOp::BitXor)
+@@ -58,7 +59,7 @@ void bind_aer_circuit(MODULE m) {
+       .value("LessEqual", Operations::BinaryOp::LessEqual)
+       .value("Greater", Operations::BinaryOp::Greater)
+       .value("GreaterEqual", Operations::BinaryOp::GreaterEqual)
+-      .export_values();
++      .finalize();
+ 
+   py::class_<Operations::ScalarType, std::shared_ptr<Operations::ScalarType>>
+       aer_scalar_type(m, "AerScalarType");
+@@ -189,4 +190,4 @@ void bind_aer_circuit(MODULE m) {
+   aer_circuit.def("store", &Circuit::store);
+ }
+ 
+-#endif
+\ No newline at end of file
++#endif
+-- 
+2.49.0
+
