@@ -64,6 +64,7 @@ requirements:
     - cmake !=3.17,>=3.8
     - libgomp  # [linux]
     - llvm-openmp  # [osx]
+    - vcomp14  # [win]
     - ninja
   host:
     - libblas
