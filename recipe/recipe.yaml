@@ -3,7 +3,7 @@ schema_version: 1
 context:
   name: qiskit-aer
   version: "0.17.2"
-  build: 5
+  build: 6
   has_cuda: ${{ cuda_compiler_version != "None" }}
 
 package:
