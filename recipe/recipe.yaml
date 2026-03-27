@@ -29,7 +29,8 @@ source:
 build:
   number: ${{ build }}
   string: ${{ "cpu" if not has_cuda else "cuda" + (cuda_compiler_version | replace('.', '')) }}_py${{ python | version_to_buildstring }}h${{ hash }}_${{ build if not has_cuda else build + 200 }}
-  skip: has_cuda and not (linux and x86_64)
+  # skip: has_cuda and not (linux and x86_64)
+  skip: not (has_cuda and linux and x86_64 and match(python, "==3.13"))
   script:
     env:
       DISABLE_DEPENDENCY_INSTALL: ON
