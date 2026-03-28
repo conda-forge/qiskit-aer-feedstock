@@ -3,7 +3,7 @@ schema_version: 1
 context:
   name: qiskit-aer
   version: "0.17.2"
-  build: 5
+  build: 6
   has_cuda: ${{ cuda_compiler_version != "None" }}
 
 package:
@@ -29,22 +29,30 @@ source:
 build:
   number: ${{ build }}
   string: ${{ "cpu" if not has_cuda else "cuda" + (cuda_compiler_version | replace('.', '')) }}_py${{ python | version_to_buildstring }}h${{ hash }}_${{ build if not has_cuda else build + 200 }}
-  skip: has_cuda and not (linux and x86_64)
+  # skip: has_cuda and not (linux and x86_64)
+  skip: not (has_cuda and linux and x86_64 and match(python, "==3.13"))
   script:
     env:
       DISABLE_DEPENDENCY_INSTALL: ON
       DISABLE_CONAN: ON
     content:
       - if: unix and has_cuda
-        then:
-          - |
-            export CMAKE_BUILD_PARALLEL_LEVEL=1
-            export CUQUANTUM_ROOT="$PREFIX"
-            export CUTENSOR_ROOT="$PREFIX"
-            export AER_THRUST_BACKEND=CUDA
-            export AER_ENABLE_CUQUANTUM=ON
-            {% raw %}# cuQuantum only supports Volta+{% endraw %}
-            export AER_CUDA_ARCH="7.0;7.5;8.0;8.6;9.0+PTX"
+        then: |
+          export CMAKE_BUILD_PARALLEL_LEVEL=1
+          export CUQUANTUM_ROOT="$PREFIX"
+          export CUTENSOR_ROOT="$PREFIX"
+          export AER_THRUST_BACKEND=CUDA
+          export AER_ENABLE_CUQUANTUM=ON
+          {% raw %}# cuQuantum only supports Volta+{% endraw %}
+
+      - if: unix and has_cuda and match(cuda_compiler_version, "12.*")
+        then: |
+          export AER_CUDA_ARCH="7.0;7.5;8.0;8.6;9.0+PTX"
+
+      # CUDA 13 dropped 7.0.
+      - if: unix and has_cuda and match(cuda_compiler_version, "13.*")
+        then: |
+          export AER_CUDA_ARCH="7.5;8.0;8.6;9.0+PTX"
 
       - if: win
         then: |
