@@ -3,7 +3,7 @@ schema_version: 1
 context:
   name: qiskit-aer
   version: "0.17.2"
-  build: 5
+  build: 6
   has_cuda: ${{ cuda_compiler_version != "None" }}
 
 package:
@@ -25,26 +25,39 @@ source:
     # compile error on gcc 14
     # Submitted upstream in https://github.com/Qiskit/qiskit-aer/pull/2417
     - 0003-Switch-from-pybind11-enum_-to-native_enum.patch
+    # Bump the pybind11 target's CXX_STANDARD from 14 to 17. CUDA 13's
+    # bundled libcu++/CCCL headers require at least C++17 and CMake derives
+    # the nvcc -std= flag for the CUDA-compiled bindings.cc from this same
+    # property.
+    - 0004-Bump-pybind11-target-C-standard-to-C-17.patch
 
 build:
   number: ${{ build }}
   string: ${{ "cpu" if not has_cuda else "cuda" + (cuda_compiler_version | replace('.', '')) }}_py${{ python | version_to_buildstring }}h${{ hash }}_${{ build if not has_cuda else build + 200 }}
-  skip: has_cuda and not (linux and x86_64)
+  # skip: has_cuda and not (linux and x86_64)
+  skip: not (has_cuda and linux and x86_64 and match(python, "==3.13"))
   script:
     env:
       DISABLE_DEPENDENCY_INSTALL: ON
       DISABLE_CONAN: ON
     content:
       - if: unix and has_cuda
-        then:
-          - |
-            export CMAKE_BUILD_PARALLEL_LEVEL=1
-            export CUQUANTUM_ROOT="$PREFIX"
-            export CUTENSOR_ROOT="$PREFIX"
-            export AER_THRUST_BACKEND=CUDA
-            export AER_ENABLE_CUQUANTUM=ON
-            {% raw %}# cuQuantum only supports Volta+{% endraw %}
-            export AER_CUDA_ARCH="7.0;7.5;8.0;8.6;9.0+PTX"
+        then: |
+          export CMAKE_BUILD_PARALLEL_LEVEL=1
+          export CUQUANTUM_ROOT="$PREFIX"
+          export CUTENSOR_ROOT="$PREFIX"
+          export AER_THRUST_BACKEND=CUDA
+          export AER_ENABLE_CUQUANTUM=ON
+          {% raw %}# cuQuantum only supports Volta+{% endraw %}
+
+      - if: unix and has_cuda and match(cuda_compiler_version, "12.*")
+        then: |
+          export AER_CUDA_ARCH="7.0;7.5;8.0;8.6;9.0+PTX"
+
+      # CUDA 13 dropped 7.0.
+      - if: unix and has_cuda and match(cuda_compiler_version, "13.*")
+        then: |
+          export AER_CUDA_ARCH="7.5;8.0;8.6;9.0+PTX"
 
       - if: win
         then: |
