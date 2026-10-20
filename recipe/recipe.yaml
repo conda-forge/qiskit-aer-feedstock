@@ -2,8 +2,8 @@ schema_version: 1
 
 context:
   name: qiskit-aer
-  version: "0.17.2"
-  build: 5
+  version: "0.18.0"
+  build: 0
   has_cuda: ${{ cuda_compiler_version != "None" }}
 
 package:
@@ -12,7 +12,7 @@ package:
 
 source:
   url: https://github.com/Qiskit/${{ name }}/archive/refs/tags/${{ version }}.tar.gz
-  sha256: 0231c74ae23d7dcaef664c39e57f800ee5174f73821a60f328ca3fe542266950
+  sha256: 35bf9bd637b104203c66248ea0cdfaba26c4f93719ac2d9d5bfba5b03e503e3b
   patches:
     # Update cmake configuration to base build flags on target architecture instead of host
     # Submitted upstream in https://github.com/Qiskit/qiskit-aer/pull/2390
