@@ -68,11 +68,7 @@ requirements:
   host:
     - libblas
     - liblapack
-    # Upstream builds with 3.1.2 but that has no osx arm64 build. Instead we
-    # pin the latest known working version. See
-    # https://github.com/Qiskit/qiskit-aer/issues/1742 where problems were
-    # reported with 3.10.3
-    - nlohmann_json <=3.10.2
+    - nlohmann_json
     # In early 2025, mkl started getting installed randomly on Linux about 50%
     # of the time. When this happens the build seems to link to it but not add
     # it to the run exports. Maybe mkl builds could work but we have been doing
@@ -95,7 +91,7 @@ requirements:
     - numpy >=1.16.3
     - psutil >=5
     - python-dateutil >=2.8.0
-    - qiskit >=0.45.2
+    - qiskit >=1.1.0,<3
     - scipy >=1.0
     - if: has_cuda
       then: ${{ pin_compatible('cuda-version', upper_bound='x', lower_bound='x') }}
