@@ -2,7 +2,7 @@ schema_version: 1
 
 context:
   name: qiskit-aer
-  version: "0.18.2"
+  version: "0.18.4"
   build: 0
   has_cuda: ${{ cuda_compiler_version != "None" }}
 
@@ -12,7 +12,7 @@ package:
 
 source:
   url: https://github.com/Qiskit/${{ name }}/archive/refs/tags/${{ version }}.tar.gz
-  sha256: ab4fa46a70836bff24e95078b10dc316e2c36d85a029de2f5817de41ed746810
+  sha256: aedad341be588501208eba282510c1500777659f85655c93b84ed37ea533d138
 
 build:
   number: ${{ build }}
